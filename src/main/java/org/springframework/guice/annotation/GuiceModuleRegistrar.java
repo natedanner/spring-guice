@@ -75,7 +75,7 @@ class GuiceModuleRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoa
 	}
 
 	private Set<Pattern> parsePatterns(AnnotationMetadata annotation, String attributeName) {
-		Set<Pattern> result = new HashSet<Pattern>();
+		Set<Pattern> result = new HashSet<>();
 		AnnotationAttributes attributes = new AnnotationAttributes(
 				annotation.getAnnotationAttributes(GuiceModule.class.getName()));
 		String[] filters = attributes.getStringArray(attributeName);
@@ -88,7 +88,7 @@ class GuiceModuleRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoa
 	}
 
 	private Set<String> parseNames(AnnotationMetadata annotation, String attributeName) {
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		AnnotationAttributes attributes = new AnnotationAttributes(
 				annotation.getAnnotationAttributes(GuiceModule.class.getName()));
 		String[] filters = attributes.getStringArray(attributeName);
@@ -102,7 +102,7 @@ class GuiceModuleRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoa
 
 	private Set<TypeFilter> parseFilters(AnnotationMetadata annotation, String attributeName) {
 
-		Set<TypeFilter> result = new HashSet<TypeFilter>();
+		Set<TypeFilter> result = new HashSet<>();
 		AnnotationAttributes attributes = new AnnotationAttributes(
 				annotation.getAnnotationAttributes(GuiceModule.class.getName()));
 		AnnotationAttributes[] filters = attributes.getAnnotationArray(attributeName);
@@ -116,7 +116,7 @@ class GuiceModuleRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoa
 
 	private List<TypeFilter> typeFiltersFor(AnnotationAttributes filterAttributes) {
 
-		List<TypeFilter> typeFilters = new ArrayList<TypeFilter>();
+		List<TypeFilter> typeFilters = new ArrayList<>();
 		FilterType filterType = filterAttributes.getEnum("type");
 
 		for (Class<?> filterClass : filterAttributes.getClassArray("value")) {

@@ -32,8 +32,7 @@ public class GuiceWiringTests extends AbstractCompleteWiringTests {
 
 	@Override
 	protected Injector createInjector() {
-		Injector app = Guice.createInjector(new TestConfig());
-		return app;
+		return Guice.createInjector(new TestConfig());
 	}
 
 	public static class TestConfig extends AbstractModule {

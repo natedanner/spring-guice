@@ -56,14 +56,14 @@ public class GuiceModuleMetadata implements BindingTypeMatcher {
 
 	private String[] excludeNames;
 
-	private Set<Class<?>> infrastructureTypes = new HashSet<Class<?>>();
+	private final Set<Class<?>> infrastructureTypes = new HashSet<>();
 
 	{
 		this.infrastructureTypes.add(InitializingBean.class);
 		this.infrastructureTypes.add(DisposableBean.class);
 	}
 
-	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();
+	private final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();
 
 	public GuiceModuleMetadata include(String... filters) {
 		this.includeNames = filters;
@@ -97,11 +97,8 @@ public class GuiceModuleMetadata implements BindingTypeMatcher {
 
 	@Override
 	public boolean matches(String name, Type type) {
-		Type rawType = (type instanceof ParameterizedType) ? ((ParameterizedType) type).getRawType() : type;
-		if (!matches(name) || !matches(rawType)) {
-			return false;
-		}
-		return true;
+		Type rawType = type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type;
+		return !(!matches(name) || !matches(rawType));
 	}
 
 	private boolean matches(String name) {

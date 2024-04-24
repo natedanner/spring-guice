@@ -94,7 +94,7 @@ public class SpringModuleWrappedTests {
 
 		@Override
 		protected void configure() {
-			bind(Service.class).toProvider(() -> new MyService());
+			bind(Service.class).toProvider(MyService::new);
 		}
 
 	}

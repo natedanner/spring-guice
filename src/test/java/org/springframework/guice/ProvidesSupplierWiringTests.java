@@ -101,13 +101,13 @@ public class ProvidesSupplierWiringTests {
 		@Singleton
 		@Provides
 		Supplier<Foo> getFoo() {
-			return () -> new Foo();
+			return Foo::new;
 		}
 
 		@Singleton
 		@Provides
 		Supplier<Bar> getBar() {
-			return () -> new Bar();
+			return Bar::new;
 		}
 
 	}
@@ -125,7 +125,7 @@ public class ProvidesSupplierWiringTests {
 
 		@Bean
 		Supplier<Foo_Spring> fooSpring() {
-			return () -> new Foo_Spring();
+			return Foo_Spring::new;
 		}
 
 		@Bean

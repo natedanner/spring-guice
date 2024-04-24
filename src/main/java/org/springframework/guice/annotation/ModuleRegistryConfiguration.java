@@ -130,9 +130,9 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 		SpringModule module = new SpringModule((ConfigurableListableBeanFactory) registry,
 				this.enableJustInTimeBinding);
 		modules.add(module);
-		Map<Key<?>, Binding<?>> bindings = new HashMap<Key<?>, Binding<?>>();
+		Map<Key<?>, Binding<?>> bindings = new HashMap<>();
 		List<Element> elements = Elements.getElements(Stage.TOOL, modules);
-		List<Message> errors = elements.stream().filter((e) -> e instanceof Message).map((e) -> (Message) e)
+		List<Message> errors = elements.stream().filter(Message.class::isInstance).map(Message.class::cast)
 				.collect(Collectors.toList());
 		if (!errors.isEmpty()) {
 			throw new ConfigurationException(errors);
@@ -145,7 +145,7 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 		if (this.applicationContext.getEnvironment().containsProperty("spring.guice.modules.exclude")) {
 			String[] modulesToFilter = this.applicationContext.getEnvironment()
 					.getProperty("spring.guice.modules.exclude", "").split(",");
-			elements = elements.stream().filter((e) -> elementFilter(modulesToFilter, e)).collect(Collectors.toList());
+			elements = elements.stream().filter(e -> elementFilter(modulesToFilter, e)).collect(Collectors.toList());
 			modules = Collections.singletonList(Elements.getModule(elements));
 		}
 		for (Element e : elements) {
@@ -171,7 +171,7 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 	private List<Module> filterModules(BeanDefinitionRegistry registry, List<Module> modules) {
 		Map<String, ModuleFilter> moduleFilters = ((ConfigurableListableBeanFactory) registry)
 				.getBeansOfType(ModuleFilter.class);
-		Predicate<Module> moduleFilter = (m) -> true;
+		Predicate<Module> moduleFilter = m -> true;
 		for (Predicate<Module> value : moduleFilters.values()) {
 			moduleFilter = moduleFilter.and(value);
 		}
@@ -188,11 +188,11 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 				Stage.class, Stage.PRODUCTION);
 		boolean ifLazyInit = stage.equals(Stage.DEVELOPMENT);
 		Map<? extends Key<?>, List<LinkedKeyBinding<?>>> linkedBindingsByKey = bindings.values().stream()
-				.filter((e) -> e instanceof LinkedKeyBinding).map((e) -> ((LinkedKeyBinding<?>) e))
+				.filter(LinkedKeyBinding.class::isInstance).map(e -> ((LinkedKeyBinding<?>) e))
 				.collect(Collectors.groupingBy(LinkedKeyBinding::getLinkedKey));
 
 		Map<? extends Key<?>, ? extends Binding<?>> guiceBindingsByKey = bindings.entrySet().stream()
-				.filter((entry) -> {
+				.filter(entry -> {
 					Binding<?> binding = entry.getValue();
 					Key<?> key = entry.getKey();
 					Object source = binding.getSource();
@@ -209,7 +209,7 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 					}
 					if (annotationType != null) {
 						if (SPRING_GUICE_IGNORED_ANNOTATION_PREFIXES.stream()
-								.anyMatch((prefix) -> annotationType.getName().startsWith(prefix))) {
+								.anyMatch(prefix -> annotationType.getName().startsWith(prefix))) {
 							return false;
 						}
 					}
@@ -296,7 +296,7 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 	private boolean elementFilter(String[] modulesToFilter, Element element) {
 		try {
 			return Arrays.stream(modulesToFilter).noneMatch(
-					(ex) -> Optional.of(element).map(Element::getSource).map(Object::toString).orElse("").contains(ex));
+					ex -> Optional.of(element).map(Element::getSource).map(Object::toString).orElse("").contains(ex));
 		}
 		catch (Exception ex) {
 			this.logger.error(String.format("Unable fo filter element[%s] with filter [%s]", element,
@@ -325,15 +325,15 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 	 * @return de-duplicated list of bindings
 	 */
 	protected List<Element> removeDuplicates(List<Element> elements) {
-		Predicate<Element> hasSpringSource = ((element) -> element.getSource() != null
-				&& element.getSource().toString().contains(SpringModule.SPRING_GUICE_SOURCE));
+		Predicate<Element> hasSpringSource = element -> element.getSource() != null
+				&& element.getSource().toString().contains(SpringModule.SPRING_GUICE_SOURCE);
 
-		List<? extends Binding<?>> bindings = elements.stream().filter((e) -> e instanceof Binding)
-				.map((e) -> (Binding<?>) e).collect(Collectors.toList());
+		List<? extends Binding<?>> bindings = elements.stream().filter(Binding.class::isInstance)
+				.map(e -> (Binding<?>) e).collect(Collectors.toList());
 
 		Map<? extends Key<?>, ? extends Key<?>> injectionKeys = bindings.stream()
 				.collect(Collectors.groupingBy(Binding::getKey)).entrySet().stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, (e) -> {
+				.collect(Collectors.toMap(Map.Entry::getKey, e -> {
 					List<? extends Binding<?>> keyBindings = e.getValue();
 					if (keyBindings.size() == 1) {
 						// If a linked binding isn't duplicated by its key, try the linked
@@ -347,11 +347,11 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 				}));
 
 		Map<? extends Key<?>, List<? extends Binding<?>>> duplicateBindings = bindings.stream()
-				.collect(Collectors.groupingBy((e) -> injectionKeys.get(e.getKey()))).entrySet().stream()
-				.filter((e) -> e.getValue().size() > 1 && e.getValue().stream().anyMatch(hasSpringSource))
+				.collect(Collectors.groupingBy(e -> injectionKeys.get(e.getKey()))).entrySet().stream()
+				.filter(e -> e.getValue().size() > 1 && e.getValue().stream().anyMatch(hasSpringSource))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-		return elements.stream().flatMap((e) -> {
+		return elements.stream().flatMap(e -> {
 			if (e instanceof Binding) {
 				Binding<?> b = (Binding<?>) e;
 				Key<?> key = injectionKeys.get(b.getKey());
@@ -359,7 +359,7 @@ class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostProcessor
 				if (duplicates != null) {
 					if (hasSpringSource.test(b)) {
 						return duplicates.stream().filter(hasSpringSource.negate())
-								.map((guiceBinding) -> withKey(b, guiceBinding.getKey()));
+								.map(guiceBinding -> withKey(b, guiceBinding.getKey()));
 					}
 					else {
 						// Remove the duplicate Guice binding

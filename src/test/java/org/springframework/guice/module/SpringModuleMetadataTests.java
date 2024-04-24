@@ -129,8 +129,7 @@ public class SpringModuleMetadataTests {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(config);
 		context.refresh();
-		Injector injector = Guice.createInjector(new SpringModule(context));
-		return injector;
+		return Guice.createInjector(new SpringModule(context));
 	}
 
 	interface Service {

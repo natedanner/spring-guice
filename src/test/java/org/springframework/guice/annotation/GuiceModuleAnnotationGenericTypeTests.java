@@ -61,7 +61,7 @@ public class GuiceModuleAnnotationGenericTypeTests {
 
 		@Bean
 		FooImpl<String> fooBean() {
-			return new FooImpl<String>("foo.foo.foo");
+			return new FooImpl<>("foo.foo.foo");
 		}
 
 	}

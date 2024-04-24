@@ -56,14 +56,14 @@ public class SpringInjector implements Injector {
 
 	private Injector injector;
 
-	private DefaultListableBeanFactory beanFactory;
+	private final DefaultListableBeanFactory beanFactory;
 
-	private static boolean JAKARTA = false;
+	private static boolean jakarta;
 
 	public SpringInjector(ApplicationContext context) {
 		this.beanFactory = (DefaultListableBeanFactory) context.getAutowireCapableBeanFactory();
 		AutowireCandidateResolver resolver = this.beanFactory.getAutowireCandidateResolver();
-		if (resolver instanceof QualifierAnnotationAutowireCandidateResolver && JAKARTA) {
+		if (resolver instanceof QualifierAnnotationAutowireCandidateResolver && jakarta) {
 			// Guice does not yet support jakarta namespace but we can help Spring 6 to
 			// recognize javax.inject
 			QualifierAnnotationAutowireCandidateResolver qualified = (QualifierAnnotationAutowireCandidateResolver) resolver;
@@ -227,7 +227,7 @@ public class SpringInjector implements Injector {
 		if (version != null && version.contains(".")) {
 			version = version.substring(0, version.indexOf("."));
 			if (Integer.parseInt(version) > 5) {
-				JAKARTA = true;
+				jakarta = true;
 			}
 		}
 	}

@@ -50,7 +50,7 @@ import org.springframework.util.Assert;
  */
 class GuiceAutowireCandidateResolver extends ContextAnnotationAutowireCandidateResolver {
 
-	private Provider<Injector> injectorProvider;
+	private final Provider<Injector> injectorProvider;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -61,7 +61,7 @@ class GuiceAutowireCandidateResolver extends ContextAnnotationAutowireCandidateR
 
 	@Override
 	public Object getLazyResolutionProxyIfNecessary(DependencyDescriptor descriptor, String beanName) {
-		return (isLazy(descriptor, beanName) ? buildLazyResolutionProxy(descriptor, beanName) : null);
+		return isLazy(descriptor, beanName) ? buildLazyResolutionProxy(descriptor, beanName) : null;
 	}
 
 	protected boolean isLazy(DependencyDescriptor descriptor, String beanName) {

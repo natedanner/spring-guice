@@ -76,7 +76,7 @@ public class SpringModule extends AbstractModule {
 
 	private BindingTypeMatcher matcher = new GuiceModuleMetadata();
 
-	private Map<StageTypeKey, Provider<?>> bound = new HashMap<StageTypeKey, Provider<?>>();
+	private Map<StageTypeKey, Provider<?>> bound = new HashMap<>();
 
 	private ConfigurableListableBeanFactory beanFactory;
 
@@ -214,7 +214,7 @@ public class SpringModule extends AbstractModule {
 			MethodMetadata methodMetadata = ((AnnotatedBeanDefinition) definition).getFactoryMethodMetadata();
 			if (methodMetadata != null) {
 				return methodMetadata.getAnnotations().stream().filter(MergedAnnotation::isDirectlyPresent)
-						.filter((mergedAnnotation) -> Annotations.isBindingAnnotation(mergedAnnotation.getType()))
+						.filter(mergedAnnotation -> Annotations.isBindingAnnotation(mergedAnnotation.getType()))
 						.map(MergedAnnotation::synthesize).findFirst();
 			}
 			else {
@@ -275,7 +275,7 @@ public class SpringModule extends AbstractModule {
 				}
 			}
 		}
-		Key<?> key = bindingAnnotation.map((a) -> (Key<Object>) Key.get(type, a)).orElse((Key<Object>) Key.get(type));
+		Key<?> key = bindingAnnotation.map(a -> (Key<Object>) Key.get(type, a)).orElse((Key<Object>) Key.get(type));
 		StageTypeKey stageTypeKey = new StageTypeKey(binder.currentStage(), key);
 		// Only bind one provider for each type
 		if (this.bound.put(stageTypeKey, typeProvider) == null) {
@@ -319,18 +319,15 @@ public class SpringModule extends AbstractModule {
 			else if (!this.key.equals(other.key)) {
 				return false;
 			}
-			if (this.stage != other.stage) {
-				return false;
-			}
-			return true;
+			return !(this.stage != other.stage);
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());
-			result = prime * result + ((this.stage == null) ? 0 : this.stage.hashCode());
+			result = prime * result + (this.key == null ? 0 : this.key.hashCode());
+			result = prime * result + (this.stage == null ? 0 : this.stage.hashCode());
 			return result;
 		}
 
@@ -342,7 +339,7 @@ public class SpringModule extends AbstractModule {
 	}
 
 	@SuppressWarnings("checkstyle:FinalClass")
-	private static class BeanFactoryProvider implements Provider<Object> {
+	private static final class BeanFactoryProvider implements Provider<Object> {
 
 		private ConfigurableListableBeanFactory beanFactory;
 
@@ -403,7 +400,7 @@ public class SpringModule extends AbstractModule {
 					matchingBeanNames = candidateBeanNames;
 				}
 				else {
-					matchingBeanNames = new ArrayList<String>(candidateBeanNames.size());
+					matchingBeanNames = new ArrayList<>(candidateBeanNames.size());
 					for (String name : candidateBeanNames) {
 						// Make sure we don't add the same name twice using if/else
 						if (name.equals(this.name)) {

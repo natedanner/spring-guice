@@ -55,13 +55,13 @@ import org.springframework.core.OrderComparator;
  *
  */
 @SuppressWarnings("checkstyle:FinalClass")
-public class BeanFactoryProvider implements Provider<ConfigurableListableBeanFactory>, Closeable {
+public final class BeanFactoryProvider implements Provider<ConfigurableListableBeanFactory>, Closeable {
 
 	private Class<?>[] config;
 
 	private String[] basePackages;
 
-	private List<ApplicationContextInitializer<ConfigurableApplicationContext>> initializers = new ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>>();
+	private List<ApplicationContextInitializer<ConfigurableApplicationContext>> initializers = new ArrayList<>();
 
 	private PartiallyRefreshableApplicationContext context;
 

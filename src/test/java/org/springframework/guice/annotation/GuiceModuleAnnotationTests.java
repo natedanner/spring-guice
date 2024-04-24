@@ -85,8 +85,7 @@ public class GuiceModuleAnnotationTests {
 	}
 
 	private Injector createInjector(Class<?>... config) {
-		Injector injector = Guice.createInjector(new SpringModule(new AnnotationConfigApplicationContext(config)));
-		return injector;
+		return Guice.createInjector(new SpringModule(new AnnotationConfigApplicationContext(config)));
 	}
 
 	interface Service {
@@ -157,7 +156,7 @@ public class GuiceModuleAnnotationTests {
 
 		@Bean
 		public Map<String, String> someParameterizedType() {
-			return new HashMap<String, String>();
+			return new HashMap<>();
 		}
 
 	}

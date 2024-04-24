@@ -78,7 +78,7 @@ public class DevelepmentStageInjectorTest {
 
 	static class TestGuiceModule extends AbstractModule {
 
-		private boolean providerExecuted = false;
+		private boolean providerExecuted;
 
 		boolean getProviderExecuted() {
 			return this.providerExecuted;

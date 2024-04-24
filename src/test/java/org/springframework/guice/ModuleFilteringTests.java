@@ -89,7 +89,7 @@ public class ModuleFilteringTests {
 
 		@Bean
 		InjectorFactory injectorFactory() {
-			return (modules) -> Guice.createInjector(Stage.PRODUCTION, modules);
+			return modules -> Guice.createInjector(Stage.PRODUCTION, modules);
 		}
 
 		@Bean

@@ -188,7 +188,7 @@ public class EnableGuiceModulesTests {
 
 		@Bean
 		static ModuleFilter moduleFilter() {
-			return (module) -> !(module instanceof MyModule2);
+			return module -> !(module instanceof MyModule2);
 		}
 
 	}
@@ -198,7 +198,7 @@ public class EnableGuiceModulesTests {
 
 		@Bean
 		static ModuleFilter moduleFilter2() {
-			return (module) -> true;
+			return module -> true;
 		}
 
 	}
